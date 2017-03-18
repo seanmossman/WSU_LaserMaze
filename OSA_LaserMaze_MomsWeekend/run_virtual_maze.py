@@ -1,11 +1,10 @@
-"""This program initializes the connection with the Arduino and graphic 
-inteface to run the WSU laser maze. The Arduino should be pre-supplied with the
-code Laser_sensors_v*.ino.
+"""This allows for testing the maze interface without having the Arduino and/or
+lasers and sensors handy.
 """
 
 import tkinter as tk
-import serial
-import serial.tools.list_ports
+#import serial
+#import serial.tools.list_ports
 import pyglet
 import _thread
 import time
@@ -16,8 +15,17 @@ sys.setrecursionlimit(10000)
 # Connect to the serial port
 connected = False
 #port = list(serial.tools.list_ports.comports())[0][0]
-port = "COM3"
-ser = serial.Serial(port, 9600)
+#port = "COM3"
+#ser = serial.Serial(port, 9600)
+# 
+class serial:
+    """Here we make a class which emulates the serial port virtually"""
+    def write(self, s):
+        print(s)
+    def read(self):
+        return 1
+ser = serial()
+        
 buzzer = pyglet.media.load('./AudioFiles/buzzer.wav', streaming=False)
 while not connected:
     serin = ser.read()
