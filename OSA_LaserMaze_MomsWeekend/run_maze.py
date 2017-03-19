@@ -1,6 +1,6 @@
 """This program initializes the connection with the Arduino and graphic 
 inteface to run the WSU laser maze. The Arduino should be pre-supplied with the
-code Laser_sensors_v*.ino.
+code Laser_sensors.ino.
 """
 
 import tkinter as tk

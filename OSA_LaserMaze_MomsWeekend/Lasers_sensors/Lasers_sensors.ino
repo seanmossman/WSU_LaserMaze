@@ -7,21 +7,19 @@ int input = 0;
 
 //Indicate the total number of laser/sensor pairs and enumerate them. Then
 // indicate which will be used for each maze setting.
-const int numlasers = 11;
-const int laslist[numlasers] = {2,3,4,5,6,7,8,9,10,11,12};
-const int detlist[numlasers] = {1,2,3,4,5,6,7,8, 9,10,11};
+const int numlasers = 6;
+const int laslist[numlasers] = {2,3,4,5,6,7};
+const int detlist[numlasers] = {1,2,3,4,5,6};
+// Dictate the number of lasers in each set
+const int num_easy_lasers = 3;
+const int num_med_lasers = 4;
+const int num_hard_lasers = 6;
+const int num_random_lasers = 4;
 //Indicate which indices in laslist[] are to be used for each maze difficulty
-const int easy_lasindex[6] = {1, 3, 4, 5, 9, 10};
-const int med_lasindex[8] = {0, 1, 3, 4, 5, 7, 8, 10};
-const int hard_lasindex[11] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-
-int random_lasindex[7] = {0,0,0,0,0, 0,0};
-
-// Determine the number of lasers in each set
-const int num_easy_lasers = 6;
-const int num_med_lasers = 8;
-const int num_hard_lasers = 11;
-const int num_random_lasers = 7;
+const int easy_lasindex[num_easy_lasers] = {1, 3, 5};
+const int med_lasindex[num_med_lasers] =   {0, 2, 4, 5};
+const int hard_lasindex[num_hard_lasers] = {0, 1, 2, 3, 4, 5};
+int random_lasindex[num_med_lasers];
 
 //Indicate the pin wired to the various buttons
 const int finishbutton = 21;
@@ -30,7 +28,7 @@ int button_state = 0;
 // this array will be populated during calibration.  The
 // indexing goes as calarray[2i] = sensorpin corresponding to lasindex i and 
 // calarray[2i+1] = threshold value for lasindex i.
-int calarray[numlasers*2] = {0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0} ;
+int calarray[numlasers*2];
 
 //Function declaration for auto calibrate
 void calibrate(int *cal);
@@ -119,8 +117,8 @@ void loop() {
 
 // This gets executed at the beginning of every loop.  It reads the Python input from
 // serial monitor, and turns on the corresponding maze.  This is written with the
-// assumption that the only Python input will be turning on the the maze (0,1,2,3,4} 
-// for {cancel, easy, medium, hard, calibrate), and that the arduino won't read it's 
+// assumption that the only Python input will be turning on the the maze {0,1,2,3,4} 
+// for {cancel, easy, medium, hard, calibrate}, and that the arduino won't read it's 
 // own input from the serial monitor.
 void serialEvent(){
   if (Serial.available()>0){
