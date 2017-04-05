@@ -1,9 +1,13 @@
 #include <stdio.h>
 
 // Make integer that stores the "state" of the maze.
-// 0 -> Off, 1 -> Easy, 2 -> Medium, 3 -> Hard
+// 0 -> Off, 1 -> Easy, 2 -> Medium, 3 -> Hard, 4 -> Random
 int state = 0;
 int input = 0;
+
+// This flag will switch from static lasers to blinking lasers
+//    Flag tripped by a number 9 read from the serial port
+bool blink_on = false;
 
 //Indicate the total number of laser/sensor pairs and enumerate them. Then
 // indicate which will be used for each maze setting.
@@ -124,6 +128,12 @@ void serialEvent(){
   if (Serial.available()>0){
     input = Serial.read();
   }
+  
+  // Switch blink_on flag
+  if(input == 57){
+    blink_on =! blink_on;
+    input = 0;
+  }
 
   // easy_maze, medium_maze, and hard_maze are defined below
   // easy_maze
@@ -182,6 +192,13 @@ void easy_maze(){
   // Easy lasers on
   for(int i = 0; i < num_easy_lasers; i++){
     digitalWrite(laslist[easy_lasindex[i]], HIGH);
+  }
+  // Blink code
+  if(blink_on){
+    for(int i = 0; i < num_easy_lasers; i+=2){
+      digitalWrite(laslist[easy_lasindex[i]], HIGH);
+    }
+    delay
   }
   return;
 }
@@ -251,7 +268,7 @@ void sensor(int reading, int threshold){
   // write '2' to serial monitor.
   if(reading < threshold){
     Serial.println(2);
-    delay(500);
+    delay(700);
   }
   return;
 }
@@ -270,6 +287,8 @@ void calibrate( int *cal){
     for(int i = 0; i < numlasers; i++){
       detectorValues[i] = analogRead(detlist[i]); 
     }
+
+    delay(100);
     
     // Turn off a laser, find difference in reading -> get threshold. 
     for(int i = 0; i < numlasers; i++){
@@ -280,7 +299,7 @@ void calibrate( int *cal){
       // We turn off a laser to determine the difference the detector measures
       // when a laser is turned off.
       digitalWrite(laslist[i], LOW);
-      delay(1000);
+      delay(500);
       
       // For each detector, we measure the difference in reading when
       // laser is  off vs on and record maximum difference.  The detector that
@@ -293,6 +312,7 @@ void calibrate( int *cal){
           maxDetectorIndex = j;
         }
       }
+      delay(100);
       
       // Compute threshold for detector associated with laser `laserNum`
       // If the threshold difference is too small (laser broke or off track) set to zero
@@ -307,13 +327,11 @@ void calibrate( int *cal){
       // Turn the laser back on
       digitalWrite(laslist[i], HIGH);
       
-      /*For testing */
-      char testPrint[64];
-      sprintf(testPrint, "Laser: %d, Detector: %d, Min: %d, Max: %d, Threshold: %d \n", laslist[i], detlist[maxDetectorIndex], detectorValues[maxDetectorIndex] - maxDiff, detectorValues[maxDetectorIndex], detectorValues[maxDetectorIndex] - maxDiff/2);
-      Serial.print(testPrint);
-      
+//      /*For testing */
+//      char testPrint[64];
+//      sprintf(testPrint, "Laser: %d, Detector: %d, Min: %d, Max: %d, Threshold: %d \n", laslist[i], detlist[maxDetectorIndex], detectorValues[maxDetectorIndex] - maxDiff, detectorValues[maxDetectorIndex], detectorValues[maxDetectorIndex] - maxDiff/2);
+//      Serial.print(testPrint);
     }
-    
     //Turn all the lasers off
     for(int i = 0; i < numlasers; i++){
       digitalWrite(laslist[i], LOW);

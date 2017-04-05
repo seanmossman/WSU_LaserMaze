@@ -22,7 +22,7 @@ buzzer = pyglet.media.load('./AudioFiles/buzzer.wav', streaming=False)
 while not connected:
     serin = ser.read()
     connected = True
-
+    
 maze_running = False  #Global flag
 start_time = 0.0      #Global time keeper
     
@@ -134,7 +134,7 @@ class Application(tk.Frame):
     def calibrate(self):
         global maze_running
         ser.write(b'5')
-        if maze_runnning == True:
+        if maze_running == True:
             maze_running = False
 
 #==========================================================================
